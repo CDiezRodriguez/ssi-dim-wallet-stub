@@ -130,24 +130,24 @@ public class EDCStubService {
 
 
         JWTClaimsSet tokeJwtClaimsSet = new JWTClaimsSet.Builder()
-                .issuer(selfDidDocument.getId())
+                .issuer(consumerDid)
                 .audience(List.of(partnerDidDocument.getId()))
-                .subject(selfDidDocument.getId())
+                .subject(consumerDid)
                 .expirationTime(expiryTime)
                 .issueTime(Date.from(Instant.now()))
                 .claim(StringPool.CREDENTIAL_TYPES, withScopeRequest.getGrantAccess().getCredentialTypes())
                 .claim(StringPool.SCOPE, withScopeRequest.getGrantAccess().getScope())
                 .claim("consumerDid", consumerDid)
                 .claim("providerDid", providerDid)
-                .claim(StringPool.BPN, selfBpn)
+                .claim(StringPool.BPN, CommonUtils.getBpnFromDid(consumerDid))
                 .build();
 
         SignedJWT innerJwt = CommonUtils.signedJWT(tokeJwtClaimsSet, selfKeyPair, selfDidDocument.getVerificationMethod().getFirst().getId());
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                .issuer(selfDidDocument.getId())
+                .issuer(consumerDid)
                 .audience(List.of(partnerDidDocument.getId()))
-                .subject(selfDidDocument.getId())
+                .subject(consumerDid)
                 .expirationTime(expiryTime)
                 .issueTime(Date.from(Instant.now()))
                 .jwtID(UUID.randomUUID().toString())
