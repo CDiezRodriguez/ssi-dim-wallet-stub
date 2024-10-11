@@ -27,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.tractusx.wallet.stub.apidoc.StatusListApiDoc;
 import org.eclipse.tractusx.wallet.stub.did.DidDocumentService;
+import org.eclipse.tractusx.wallet.stub.storage.DBSorage;
 import org.eclipse.tractusx.wallet.stub.storage.MemoryStorage;
 import org.eclipse.tractusx.wallet.stub.utils.CustomCredential;
 import org.eclipse.tractusx.wallet.stub.utils.StringPool;
@@ -49,7 +50,7 @@ import java.util.Optional;
 @Tag(name = "Status list credential")
 public class StatusListCredentialController {
 
-    private final MemoryStorage memoryStorage;
+    private final DBSorage memoryStorage;
     private final DidDocumentService didDocumentService;
 
 

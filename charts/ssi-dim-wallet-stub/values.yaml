@@ -135,7 +135,59 @@ wallet:
     type: ClusterIP
     port: 8080
 
+  database:
+    # -- Set to true to enable SSL connection to the database
+    useSSL: false
+    # -- Database port
+    port: 5432
+    # -- Database host
+    host: "{{ .Release.Name }}-postgresql"
+    # -- Database user
+    user: "postgres"
+    # -- Database name
+    name: "miw_app"
+    # -- Existing secret name for the database password
+    secret: "{{ .Release.Name }}-postgresql"
+    # -- Existing secret key for the database password
+    secretPasswordKey: "dbpasswordwallet"
+    encryptionKey:
+      # -- Database encryption key for confidential data.  Ignored if `secret` is set. If empty a secret with 32 random alphanumeric chars is generated.
+      value: ""
+      # -- Existing secret for database encryption key
+      secret: ""
+      # -- Existing secret key for database encryption key
+      secretKey: ""
+
 
 # -- Keycloak configuration
 keycloak:
  enabled: false
+
+# -- PostgreSQL configuration
+postgresql:
+  # -- Enable to deploy Postgresql
+  enabled: true
+  auth:
+    # -- Enable postgresql admin user
+    enablePostgresUser: false
+    # -- Postgresql admin user password
+    postgresPassword: ""
+    # -- Postgresql user to create
+    username: "postgres"
+    # -- Postgresql password to set (if empty one is generated)
+    password: "dbpasswordwallet"
+    # -- Postgresql database to create
+    database: "{{ .Release.Name }}-postgresql"
+  backup:
+    # -- Enable to create a backup cronjob
+    enabled: false
+    cronjob:
+      # -- Backup schedule
+      schedule: "* */6 * * *"
+      storage:
+        # -- Name of an existing PVC to use
+        existingClaim: ""
+        # -- Set resource policy to "keep" to avoid removing PVCs during a helm delete operation
+        resourcePolicy: "keep"
+        # -- PVC Storage Request for the backup data volume
+        size: "8Gi"

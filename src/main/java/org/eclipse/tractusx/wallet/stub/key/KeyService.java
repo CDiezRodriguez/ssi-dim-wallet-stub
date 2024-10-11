@@ -24,6 +24,7 @@ package org.eclipse.tractusx.wallet.stub.key;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.tractusx.wallet.stub.config.WalletStubSettings;
+import org.eclipse.tractusx.wallet.stub.storage.DBSorage;
 import org.eclipse.tractusx.wallet.stub.storage.MemoryStorage;
 import org.eclipse.tractusx.wallet.stub.utils.DeterministicECKeyPairGenerator;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class KeyService {
 
-    private final MemoryStorage memoryStorage;
+    private final DBSorage memoryStorage;
 
     private final WalletStubSettings walletStubSettings;
 

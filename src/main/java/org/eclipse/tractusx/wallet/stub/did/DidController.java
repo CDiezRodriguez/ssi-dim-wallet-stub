@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.tractusx.wallet.stub.apidoc.DidApiDoc;
+import org.eclipse.tractusx.wallet.stub.storage.DBSorage;
 import org.eclipse.tractusx.wallet.stub.storage.MemoryStorage;
 import org.eclipse.tractusx.wallet.stub.utils.StringPool;
 import org.springframework.http.MediaType;
@@ -45,7 +46,7 @@ public class DidController {
 
     private final DidDocumentService didDocumentService;
 
-    private final MemoryStorage memoryStorage;
+    private final DBSorage memoryStorage;
 
     /**
      * Retrieves the Decentralized Identifier (DID) document associated with the provided business partner number (bpn) from the memory store.

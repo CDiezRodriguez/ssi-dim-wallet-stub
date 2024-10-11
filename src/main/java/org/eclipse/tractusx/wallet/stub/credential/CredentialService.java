@@ -31,6 +31,7 @@ import org.eclipse.tractusx.wallet.stub.config.WalletStubSettings;
 import org.eclipse.tractusx.wallet.stub.did.DidDocument;
 import org.eclipse.tractusx.wallet.stub.did.DidDocumentService;
 import org.eclipse.tractusx.wallet.stub.key.KeyService;
+import org.eclipse.tractusx.wallet.stub.storage.DBSorage;
 import org.eclipse.tractusx.wallet.stub.storage.MemoryStorage;
 import org.eclipse.tractusx.wallet.stub.token.TokenSettings;
 import org.eclipse.tractusx.wallet.stub.utils.CommonUtils;
@@ -53,7 +54,7 @@ import java.util.UUID;
 public class CredentialService {
 
 
-    private final MemoryStorage memoryStorage;
+    private final DBSorage memoryStorage;
 
     private final KeyService keyService;
 

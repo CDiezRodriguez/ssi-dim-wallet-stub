@@ -40,6 +40,7 @@ import org.eclipse.tractusx.wallet.stub.did.DidDocumentService;
 import org.eclipse.tractusx.wallet.stub.issuer.dto.GetCredentialsResponse;
 import org.eclipse.tractusx.wallet.stub.issuer.dto.IssueCredentialRequest;
 import org.eclipse.tractusx.wallet.stub.key.KeyService;
+import org.eclipse.tractusx.wallet.stub.storage.DBSorage;
 import org.eclipse.tractusx.wallet.stub.storage.MemoryStorage;
 import org.eclipse.tractusx.wallet.stub.token.TokenSettings;
 import org.eclipse.tractusx.wallet.stub.utils.CommonUtils;
@@ -67,7 +68,7 @@ public class IssuerCredentialService {
 
     private final KeyService keyService;
     private final DidDocumentService didDocumentService;
-    private final MemoryStorage memoryStorage;
+    private final DBSorage memoryStorage;
     private final TokenSettings tokenSettings;
 
     @SuppressWarnings("unchecked")

@@ -37,3 +37,9 @@ data:
   PORTAL_HOST: {{ .Values.wallet.portal.host | quote }}
   PORTAL_REALM: {{ .Values.wallet.keycloak.realm | quote }}
   PORTAL_AUTH_SERVER_URL: {{ .Values.wallet.keycloak.authServerUrl | quote }}
+  USE_SSL: {{ .Values.wallet.database.useSSL | quote}}
+  DB_HOST: {{ .Values.wallet.database.host | quote}}
+  DB_PORT: {{ .Values.wallet.database.port | quote}}
+  DB_NAME: {{ .Values.wallet.database.name | quote}}
+  DB_USER_NAME: {{ .Values.wallet.database.user | quote}}
+

@@ -52,6 +52,12 @@ spec:
                 name: {{ .Values.wallet.secretName }}
             - configMapRef:
                 name: {{ .Values.wallet.configName }}
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ tpl .Values.wallet.database.secret . }}
+                  key: {{ tpl .Values.wallet.database.secretPasswordKey . }}
           {{- with .Values.wallet.livenessProbe }}
           {{- if .enabled }}
           ports:

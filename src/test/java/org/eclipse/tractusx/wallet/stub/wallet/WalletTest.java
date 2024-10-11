@@ -25,6 +25,7 @@ import org.eclipse.tractusx.wallet.stub.WalletStubApplication;
 import org.eclipse.tractusx.wallet.stub.config.TestContextInitializer;
 import org.eclipse.tractusx.wallet.stub.config.WalletStubSettings;
 import org.eclipse.tractusx.wallet.stub.did.DidDocument;
+import org.eclipse.tractusx.wallet.stub.storage.DBSorage;
 import org.eclipse.tractusx.wallet.stub.storage.MemoryStorage;
 import org.eclipse.tractusx.wallet.stub.utils.StringPool;
 import org.eclipse.tractusx.wallet.stub.utils.TestUtils;
@@ -46,7 +47,7 @@ class WalletTest {
     private WalletStubSettings walletStubSettings;
 
     @Autowired
-    private MemoryStorage memoryStorage;
+    private DBSorage memoryStorage;
 
     @Autowired
     private TestRestTemplate testRestTemplate;

@@ -35,6 +35,7 @@ import org.eclipse.tractusx.wallet.stub.issuer.dto.IssueCredentialResponse;
 import org.eclipse.tractusx.wallet.stub.issuer.dto.SignCredentialRequest;
 import org.eclipse.tractusx.wallet.stub.issuer.dto.SignCredentialResponse;
 import org.eclipse.tractusx.wallet.stub.issuer.dto.StoreRequestDerive;
+import org.eclipse.tractusx.wallet.stub.storage.DBSorage;
 import org.eclipse.tractusx.wallet.stub.storage.MemoryStorage;
 import org.eclipse.tractusx.wallet.stub.token.TokenService;
 import org.eclipse.tractusx.wallet.stub.token.TokenSettings;
@@ -77,7 +78,7 @@ class IssuerTest {
     private WalletStubSettings walletStubSettings;
 
     @Autowired
-    private MemoryStorage memoryStorage;
+    private DBSorage memoryStorage;
 
     @Autowired
     private DidDocumentService didDocumentService;

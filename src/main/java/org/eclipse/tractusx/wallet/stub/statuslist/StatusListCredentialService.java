@@ -28,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.tractusx.wallet.stub.credential.CredentialService;
 import org.eclipse.tractusx.wallet.stub.did.DidDocument;
 import org.eclipse.tractusx.wallet.stub.did.DidDocumentService;
+import org.eclipse.tractusx.wallet.stub.storage.DBSorage;
 import org.eclipse.tractusx.wallet.stub.storage.MemoryStorage;
 import org.eclipse.tractusx.wallet.stub.utils.CustomCredential;
 import org.eclipse.tractusx.wallet.stub.utils.StringPool;
@@ -41,7 +42,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class StatusListCredentialService {
 
-    private final MemoryStorage memoryStorage;
+    private final DBSorage memoryStorage;
 
     private final DidDocumentService didDocumentService;
 
