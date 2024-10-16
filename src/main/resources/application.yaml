@@ -28,6 +28,14 @@ spring:
       enabled: true
   application:
     name: SSI DIM Wallet stub
+  datasource:
+    #url: jdbc:postgresql://192.168.49.2:30549/yourdatabase
+    url: jdbc:postgresql://umbrella-portal-backend-postgresql:5432/postgres
+    username: postgres
+    password: dbpasswordportal
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximun-pool-size: 10
 
 springdoc:
   swagger-ui:

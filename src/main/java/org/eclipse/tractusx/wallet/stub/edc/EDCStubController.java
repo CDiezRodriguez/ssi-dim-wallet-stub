@@ -30,14 +30,23 @@ import org.eclipse.tractusx.wallet.stub.apidoc.EDCStubApiDoc;
 import org.eclipse.tractusx.wallet.stub.edc.dto.QueryPresentationRequest;
 import org.eclipse.tractusx.wallet.stub.edc.dto.QueryPresentationResponse;
 import org.eclipse.tractusx.wallet.stub.edc.dto.StsTokeResponse;
+import org.eclipse.tractusx.wallet.stub.edc.portal.CompanyDTO;
+import org.eclipse.tractusx.wallet.stub.edc.portal.ConnectorDTO;
+import org.eclipse.tractusx.wallet.stub.edc.portal.PortalValidationService;
+import org.eclipse.tractusx.wallet.stub.utils.StringPool;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -47,6 +56,40 @@ import java.util.Map;
 public class EDCStubController {
 
     private final EDCStubService edcStubService;
+
+    @Autowired
+    private PortalValidationService portalValidationService;
+
+
+
+    /**
+     * Validate participants2
+     * @param bpn   The bpn
+     * @param connector_url The connector URL
+     */
+
+    @GetMapping(path = "/api/validate")
+    public ResponseEntity<Boolean> validate(@RequestParam String bpn, @RequestParam String connector_url) {
+        return ResponseEntity.ok(portalValidationService.validateCompanyAndConnector(bpn,connector_url));
+    }
+
+    /**
+     * Validate participants
+     */
+    @EDCStubApiDoc.GetSts
+    @PostMapping(path = "/api/validate/companies")
+    public List<CompanyDTO> validate1() {
+        return portalValidationService.getAllCompanies();
+    }
+
+    /**
+     * Validate participants
+     */
+    @EDCStubApiDoc.GetSts
+    @PostMapping(path = "/api/validate/connector")
+    public List<ConnectorDTO> validate2() {
+        return portalValidationService.getAllConnector();
+    }
 
     /**
      * This method is responsible for creating a JWT token with a specific scope.
