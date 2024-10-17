@@ -36,7 +36,7 @@ public class ConnectorRepository {
     }
 
     public List<ConnectorDTO> getAllConnectors(){
-        String sql = "SELECT connector_url,host_id FROM portal.connectors";
+        String sql = "SELECT connector_url,host_id FROM connectors";
         return jdbcTemplate.query(sql, (rs, rowNum) ->
                 new ConnectorDTO(
                         rs.getString("connector_url"),
@@ -45,9 +45,9 @@ public class ConnectorRepository {
     }
 
     public ConnectorDTO getConnector(String connector_url, String host_id){
-        String sql = "SELECT connector_url,host_id FROM portal.connectors WHERE connector_url = ? AND host_id = CAST(? AS UUID)";
+        String sql = "SELECT connector_url,host_id FROM connectors WHERE host_id = CAST(? AS UUID)";
         try {
-            return jdbcTemplate.queryForObject(sql, new Object[]{ connector_url, host_id }, (rs, rowNum) ->
+            return jdbcTemplate.queryForObject(sql, new Object[]{ host_id }, (rs, rowNum) ->
                     new ConnectorDTO(
                             rs.getString("connector_url"),
                             rs.getString("host_id")

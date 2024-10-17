@@ -21,11 +21,18 @@
 
 package org.eclipse.tractusx.wallet.stub.edc.portal;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.buf.UEncoder;
 import org.springframework.stereotype.Service;
 
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.List;
 
 @Service
+@Slf4j
 public class PortalValidationService {
     private final CompanyRepository companyRepository;
     private final ConnectorRepository connectorRepository;
@@ -43,12 +50,16 @@ public class PortalValidationService {
         return connectorRepository.getAllConnectors();
     }
 
-    public Boolean validateCompanyAndConnector(String bpn, String url){
+    public Boolean validateCompanyAndConnector(String bpn, String url) throws UnknownHostException, MalformedURLException {
         CompanyDTO company = companyRepository.getCompany(bpn);
         if (company == null){
             return false;
         }
         ConnectorDTO connector = connectorRepository.getConnector(url, company.getId());
-        return connector != null;
+        URL urlObtenido = new URL(connector.getConnector_url());
+        String hostObtenido = InetAddress.getByName(urlObtenido.getHost()).getHostAddress();
+        String hostAComparar = InetAddress.getByName(url).getHostAddress();
+        log.debug("Compare introduced address -> {} with database ones ->{}", hostObtenido, hostAComparar);
+        return hostObtenido.equals(hostAComparar);
     }
 }

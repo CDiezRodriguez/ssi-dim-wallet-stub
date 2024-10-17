@@ -36,7 +36,7 @@ public class CompanyRepository {
     }
 
     public List<CompanyDTO> getAllCompanies(){
-        String sql = "SELECT id,business_partner_number FROM portal.companies";
+        String sql = "SELECT id,business_partner_number FROM companies";
         return jdbcTemplate.query(sql, (rs, rowNum) ->
                 new CompanyDTO(
                         rs.getString("id"),
@@ -45,7 +45,7 @@ public class CompanyRepository {
     }
 
     public CompanyDTO getCompany(String business_partner_number){
-        String sql = "SELECT id,business_partner_number FROM portal.companies WHERE business_partner_number = ?";
+        String sql = "SELECT id,business_partner_number FROM companies WHERE business_partner_number = ?";
 
         try {
             return jdbcTemplate.queryForObject(sql, new Object[]{ business_partner_number }, (rs, rowNum) ->

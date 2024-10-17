@@ -52,6 +52,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +77,7 @@ public class EDCStubController {
      */
 
     @GetMapping(path = "/api/validate")
-    public ResponseEntity<Boolean> validate(@RequestParam String bpn, @RequestParam String connector_url) {
+    public ResponseEntity<Boolean> validate(@RequestParam String bpn, @RequestParam String connector_url) throws UnknownHostException, MalformedURLException {
         return ResponseEntity.ok(portalValidationService.validateCompanyAndConnector(bpn,connector_url));
     }
 
@@ -90,6 +91,7 @@ public class EDCStubController {
         System.out.println(request.getRemoteUser());
 
         System.out.println(InetAddress.getByName("dataconsumer-1-controlplane.tx.test").getHostAddress());
+        System.out.println(InetAddress.getByName("192.168.49.2").getHostAddress());
     }
 
     /**
