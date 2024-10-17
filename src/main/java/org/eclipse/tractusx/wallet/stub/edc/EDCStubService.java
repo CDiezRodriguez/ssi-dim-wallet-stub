@@ -27,6 +27,7 @@ import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.SignedJWT;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,7 @@ import org.eclipse.tractusx.wallet.stub.edc.dto.CreateCredentialWithScopeRequest
 import org.eclipse.tractusx.wallet.stub.edc.dto.CreateCredentialWithoutScopeRequest;
 import org.eclipse.tractusx.wallet.stub.edc.dto.QueryPresentationRequest;
 import org.eclipse.tractusx.wallet.stub.edc.dto.QueryPresentationResponse;
+import org.eclipse.tractusx.wallet.stub.edc.portal.PortalValidationService;
 import org.eclipse.tractusx.wallet.stub.key.KeyService;
 import org.eclipse.tractusx.wallet.stub.token.TokenService;
 import org.eclipse.tractusx.wallet.stub.token.TokenSettings;
@@ -77,6 +79,8 @@ public class EDCStubService {
     private final TokenService tokenService;
 
     private final CredentialService credentialService;
+
+    private final PortalValidationService portalValidationService;
 
     private static @NotNull Set<String> validateRequestedVcAndScope(QueryPresentationRequest request, List<String> vcTypesFromSIToken, String scopeFromSiToken) {
 
@@ -160,6 +164,22 @@ public class EDCStubService {
         String serialize = signedJWT.serialize();
         log.debug("Token created  with scope -> {}", serialize);
         return serialize;
+    }
+
+    /**
+     * This method is responsible for creating a JWT token with specific scope.
+     *
+     * @param request The request object containing necessary data for creating the token.
+     * @param token   The existing token to be used for creating the new token with scope.
+     * @return A string representing the newly created JWT token with the specified scope.
+     */
+    @SneakyThrows
+    public Boolean ValidateConnectorAndCompany(Map<String, Object> request, HttpServletRequest Srequest) {
+        log.debug("1. Start validating the request -> {} and connector_url ->{}", objectMapper.writeValueAsString(request), Srequest.getRemoteHost());
+        CreateCredentialWithScopeRequest withScopeRequest = objectMapper.convertValue(request, CreateCredentialWithScopeRequest.class);
+        String bpn = CommonUtils.getBpnFromDid(withScopeRequest.getGrantAccess().getConsumerDid());
+        log.debug("2. Start validating the bpn -> {} and connector_url ->{}", bpn, Srequest.getRemoteHost());
+        return portalValidationService.validateCompanyAndConnector(bpn, Srequest.getRemoteHost());
     }
 
     /**

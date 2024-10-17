@@ -24,8 +24,10 @@ package org.eclipse.tractusx.wallet.stub.edc;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.protocol.HTTP;
 import org.eclipse.tractusx.wallet.stub.apidoc.EDCStubApiDoc;
 import org.eclipse.tractusx.wallet.stub.edc.dto.QueryPresentationRequest;
 import org.eclipse.tractusx.wallet.stub.edc.dto.QueryPresentationResponse;
@@ -33,9 +35,11 @@ import org.eclipse.tractusx.wallet.stub.edc.dto.StsTokeResponse;
 import org.eclipse.tractusx.wallet.stub.edc.portal.CompanyDTO;
 import org.eclipse.tractusx.wallet.stub.edc.portal.ConnectorDTO;
 import org.eclipse.tractusx.wallet.stub.edc.portal.PortalValidationService;
+import org.eclipse.tractusx.wallet.stub.utils.CommonUtils;
 import org.eclipse.tractusx.wallet.stub.utils.StringPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,7 +49,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 
@@ -71,6 +78,18 @@ public class EDCStubController {
     @GetMapping(path = "/api/validate")
     public ResponseEntity<Boolean> validate(@RequestParam String bpn, @RequestParam String connector_url) {
         return ResponseEntity.ok(portalValidationService.validateCompanyAndConnector(bpn,connector_url));
+    }
+
+
+    @GetMapping("/api/some-endpoint")
+    public void getOrigin(HttpServletRequest request) throws UnknownHostException {
+
+        System.out.println(request.getRemoteAddr()); //ESTE FUNCIONA
+        System.out.println(request.getRemoteHost()); //ESTE FUNCIONA
+        System.out.println(request.getRemotePort());
+        System.out.println(request.getRemoteUser());
+
+        System.out.println(InetAddress.getByName("dataconsumer-1-controlplane.tx.test").getHostAddress());
     }
 
     /**
@@ -102,9 +121,15 @@ public class EDCStubController {
     @PostMapping(path = "/api/sts", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StsTokeResponse> createTokenWithScope(
             @RequestBody Map<String, Object> request,
-            @Parameter(hidden = true) @RequestHeader(name = HttpHeaders.AUTHORIZATION) String token
+            @Parameter(hidden = true) @RequestHeader(name = HttpHeaders.AUTHORIZATION) String token,
+            HttpServletRequest Srequest
     ) {
-        return ResponseEntity.ok(StsTokeResponse.builder().jwt(edcStubService.createStsToken(request, token)).build());
+        if (edcStubService.ValidateConnectorAndCompany(request,Srequest)){
+            return ResponseEntity.ok(StsTokeResponse.builder().jwt(edcStubService.createStsToken(request, token)).build());
+        }else{
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No companyBPNL or connectorURL register in Portal");
+        }
+
     }
 
 
