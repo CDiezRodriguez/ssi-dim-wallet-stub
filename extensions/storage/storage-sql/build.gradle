@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.eclipse.tractusx.wallet.stub'
+version = '0.0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':core:core-storage')
+    implementation project(':core:core-did')
+    implementation project(':core:core-utils')
+
+    //Database
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'com.h2database:h2:2.2.224'
+    implementation 'org.postgresql:postgresql'
+    implementation 'org.liquibase:liquibase-core'
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.eclipse.tractusx.wallet.stub'
+version = 'latest'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':core:core-apidoc')
+    implementation project(':core:core-domain')
+    implementation project(':core:core-did')
+    implementation project(':core:core-exception')
+    implementation project(':core:core-storage')
+    implementation project(':core:core-token')
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
