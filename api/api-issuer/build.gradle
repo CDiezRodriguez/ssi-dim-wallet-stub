@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.eclipse.tractusx.wallet.stub'
+version = 'latest'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':core:core-utils')
+    implementation project(':core:core-dto')
+    implementation project(':service:service-issuer')
+    implementation project(':service:service-utils')
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.eclipse.tractusx.wallet.stub'
+version = 'latest'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':api:api-edc')
+    implementation project(':api:api-bdrs')
+    implementation project(':api:api-did')
+    implementation project(':api:api-issuer')
+    implementation project(':api:api-portal')
+    implementation project(':api:api-statuslist')
+    implementation project(':api:api-token')
+    implementation project(':core:core-storage-memory')
+}
+
+test {
+    useJUnitPlatform()
+}
