@@ -71,6 +71,43 @@ public class CredentialServiceImplTest {
         testKeyPair = keyGen.generateKeyPair();
     }
 
+    private DidDocument createDidDocument(String issuerId) {
+        return DidDocument.Builder.newInstance()
+                .id(issuerId)
+                .verificationMethod(List.of(VerificationMethod.Builder.newInstance()
+                        .id(issuerId + "#key-1")
+                        .controller(issuerId)
+                        .type("JsonWebKey2020")
+                        .publicKeyJwk(Map.of(
+                            "kty", "EC",
+                            "crv", "secp256k1",
+                            "use", "sig",
+                            "kid", "key-1",
+                            "alg", "ES256K"
+                        ))
+                        .build()))
+                .build();
+    }
+
+    private void setupCommonMocks(String holderBpn, String type, String baseWalletBpn, String issuerId, String holderId) {
+        // Mock WalletStubSettings
+        when(walletStubSettings.baseWalletBPN()).thenReturn(baseWalletBpn);
+        
+        // Mock Storage to return empty
+        when(storage.getCredentialsByHolderBpnAndType(holderBpn, type))
+                .thenReturn(Optional.empty());
+        
+        // Mock DidDocumentService with proper VerificationMethod
+        DidDocument issuerDidDoc = createDidDocument(issuerId);
+
+        DidDocument holderDidDoc = DidDocument.Builder.newInstance()
+                .id(holderId)
+                .build();
+        
+        when(didDocumentService.getDidDocument(baseWalletBpn)).thenReturn(issuerDidDoc);
+        when(didDocumentService.getDidDocument(holderBpn)).thenReturn(holderDidDoc);
+    }
+
     @Test
     void shouldReturnExistingJwtWhenPresent() {
         // Given
@@ -128,21 +165,7 @@ public class CredentialServiceImplTest {
         when(keyService.getKeyPair(baseWalletBpn)).thenReturn(testKeyPair);
 
         // Mock DidDocumentService
-        DidDocument issuerDidDoc = DidDocument.Builder.newInstance()
-                .id(issuerId)
-                .verificationMethod(List.of(VerificationMethod.Builder.newInstance()
-                        .id(issuerId + "#key-1")
-                        .controller(issuerId)
-                        .type("JsonWebKey2020")
-                        .publicKeyJwk(Map.of(
-                            "kty", "EC",
-                            "crv", "secp256k1",
-                            "use", "sig",
-                            "kid", "key-1",
-                            "alg", "ES256K"
-                        ))
-                        .build()))
-                .build();
+        DidDocument issuerDidDoc = createDidDocument(issuerId);
 
         DidDocument holderDidDoc = DidDocument.Builder.newInstance()
                 .id(holderId)
@@ -185,36 +208,7 @@ public class CredentialServiceImplTest {
         String issuerId = "did:web:test-issuer";
         String holderId = "did:web:test-holder";
 
-        // Mock WalletStubSettings
-        when(walletStubSettings.baseWalletBPN()).thenReturn(baseWalletBpn);
-        
-        // Mock Storage to return empty
-        when(storage.getCredentialsByHolderBpnAndType(holderBpn, type))
-                .thenReturn(Optional.empty());
-        
-        // Mock DidDocumentService
-        DidDocument issuerDidDoc = DidDocument.Builder.newInstance()
-                .id(issuerId)
-                .verificationMethod(List.of(VerificationMethod.Builder.newInstance()
-                        .id(issuerId + "#key-1")
-                        .controller(issuerId)
-                        .type("JsonWebKey2020")
-                        .publicKeyJwk(Map.of(
-                            "kty", "EC",
-                            "crv", "secp256k1",
-                            "use", "sig",
-                            "kid", "key-1",
-                            "alg", "ES256K"
-                        ))
-                        .build()))
-                .build();
-
-        DidDocument holderDidDoc = DidDocument.Builder.newInstance()
-                .id(holderId)
-                .build();
-        
-        when(didDocumentService.getDidDocument(baseWalletBpn)).thenReturn(issuerDidDoc);
-        when(didDocumentService.getDidDocument(holderBpn)).thenReturn(holderDidDoc);
+        setupCommonMocks(holderBpn, type, baseWalletBpn, issuerId, holderId);
 
         // When
         CustomCredential credential = credentialService.getVerifiableCredentialByHolderBpnAndType(holderBpn, type);
@@ -240,36 +234,7 @@ public class CredentialServiceImplTest {
         String issuerId = "did:web:test-issuer";
         String holderId = "did:web:test-holder";
 
-        // Mock WalletStubSettings
-        when(walletStubSettings.baseWalletBPN()).thenReturn(baseWalletBpn);
-        
-        // Mock Storage to return empty
-        when(storage.getCredentialsByHolderBpnAndType(holderBpn, type))
-                .thenReturn(Optional.empty());
-        
-        // Mock DidDocumentService
-        DidDocument issuerDidDoc = DidDocument.Builder.newInstance()
-                .id(issuerId)
-                .verificationMethod(List.of(VerificationMethod.Builder.newInstance()
-                        .id(issuerId + "#key-1")
-                        .controller(issuerId)
-                        .type("JsonWebKey2020")
-                        .publicKeyJwk(Map.of(
-                            "kty", "EC",
-                            "crv", "secp256k1",
-                            "use", "sig",
-                            "kid", "key-1",
-                            "alg", "ES256K"
-                        ))
-                        .build()))
-                .build();
-
-        DidDocument holderDidDoc = DidDocument.Builder.newInstance()
-                .id(holderId)
-                .build();
-        
-        when(didDocumentService.getDidDocument(baseWalletBpn)).thenReturn(issuerDidDoc);
-        when(didDocumentService.getDidDocument(holderBpn)).thenReturn(holderDidDoc);
+        setupCommonMocks(holderBpn, type, baseWalletBpn, issuerId, holderId);
 
         // When
         CustomCredential credential = credentialService.getVerifiableCredentialByHolderBpnAndType(holderBpn, type);
@@ -296,32 +261,9 @@ public class CredentialServiceImplTest {
         String type = "UnsupportedType";
         String baseWalletBpn = "BPNL000000000000";
         String issuerId = "did:web:test-issuer";
+        String holderId = "did:web:test-holder";
 
-        // Mock WalletStubSettings
-        when(walletStubSettings.baseWalletBPN()).thenReturn(baseWalletBpn);
-        
-        // Mock Storage to return empty
-        when(storage.getCredentialsByHolderBpnAndType(holderBpn, type))
-                .thenReturn(Optional.empty());
-
-        // Mock DidDocument with proper VerificationMethod
-        DidDocument issuerDidDoc = DidDocument.Builder.newInstance()
-                .id(issuerId)
-                .verificationMethod(List.of(VerificationMethod.Builder.newInstance()
-                        .id(issuerId + "#key-1")
-                        .controller(issuerId)
-                        .type("JsonWebKey2020")
-                        .publicKeyJwk(Map.of(
-                            "kty", "EC",
-                            "crv", "secp256k1",
-                            "use", "sig",
-                            "kid", "key-1",
-                            "alg", "ES256K"
-                        ))
-                        .build()))
-                .build();
-        
-        when(didDocumentService.getDidDocument(baseWalletBpn)).thenReturn(issuerDidDoc);
+        setupCommonMocks(holderBpn, type, baseWalletBpn, issuerId, holderId);
 
         // When/Then
         IllegalArgumentException exception = assertThrows(
