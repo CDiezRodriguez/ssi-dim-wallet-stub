@@ -109,7 +109,7 @@ public class CredentialServiceImplTest {
     }
 
     @Test
-    void shouldReturnExistingJwtWhenPresent() {
+    void getVerifiableCredentialByHolderBpnAndTypeAsJwt_returnsExistingJwt() {
         // Given
         String holderBpn = "BPNL000000000001";
         String type = "MembershipCredential";
@@ -126,7 +126,7 @@ public class CredentialServiceImplTest {
     }
 
     @Test
-    void shouldCreateNewJwtWhenNotPresent() throws Exception {
+    void getVerifiableCredentialByHolderBpnAndTypeAsJwt_createsNewJwt() throws Exception {
         // Given
         String holderBpn = "BPNL000000000001";
         String type = "MembershipCredential";
@@ -200,7 +200,7 @@ public class CredentialServiceImplTest {
     }
 
     @Test
-    void shouldCreateNewBPNCredentialWhenNotPresent() throws Exception {
+    void getVerifiableCredentialByHolderBpnAndType_createsBpnCredential() throws Exception {
         // Given
         String holderBpn = "BPNL000000000001";
         String type = Constants.BPN_CREDENTIAL;
@@ -226,7 +226,7 @@ public class CredentialServiceImplTest {
     }
 
     @Test
-    void shouldCreateNewDataExchangeCredentialWhenNotPresent() throws Exception {
+    void getVerifiableCredentialByHolderBpnAndType_createsDataExchangeCredential() throws Exception {
         // Given
         String holderBpn = "BPNL000000000001";
         String type = Constants.DATA_EXCHANGE_CREDENTIAL;
@@ -255,7 +255,7 @@ public class CredentialServiceImplTest {
     }
 
     @Test
-    void shouldThrowExceptionForUnsupportedCredentialType() {
+    void getVerifiableCredentialByHolderBpnAndType_throwsExceptionForUnsupportedType() {
         // Given
         String holderBpn = "BPNL000000000001";
         String type = "UnsupportedType";
@@ -275,7 +275,7 @@ public class CredentialServiceImplTest {
     }
 
     @Test
-    void shouldReturnExistingCredentialWhenPresent() {
+    void getVerifiableCredentialByHolderBpnAndType_returnsExistingCredential() {
         // Given
         String holderBpn = "BPNL000000000001";
         String type = "MembershipCredential";
