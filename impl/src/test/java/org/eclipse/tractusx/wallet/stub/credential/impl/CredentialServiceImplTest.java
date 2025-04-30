@@ -32,6 +32,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import org.eclipse.tractusx.wallet.stub.exception.api.InternalErrorException;
+
 @ExtendWith(MockitoExtension.class)
 public class CredentialServiceImplTest {
 
@@ -295,5 +297,77 @@ public class CredentialServiceImplTest {
         
         // Verify no other interactions
         verifyNoMoreInteractions(keyService, didDocumentService);
+    }
+
+    @Test
+    void issueStatusListCredential_successful() {
+        // Given
+        String holderBpn = "BPNL000000000001";
+        String vcId = "test-vc-id";
+        String baseWalletBpn = "BPNL000000000000";
+        String issuerId = "did:web:test-issuer";
+
+        // Mock WalletStubSettings and DidDocumentService
+        when(walletStubSettings.baseWalletBPN()).thenReturn(baseWalletBpn);
+        DidDocument issuerDidDoc = createDidDocument(issuerId);
+        when(didDocumentService.getDidDocument(baseWalletBpn)).thenReturn(issuerDidDoc);
+
+        // When
+        CustomCredential result = credentialService.issueStatusListCredential(holderBpn, vcId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(issuerId, result.get("issuer"));
+        Map<String, Object> credentialSubject = (Map<String, Object>) result.get("credentialSubject");
+        assertEquals(Constants.STATUS_LIST_2021_CREDENTIAL, credentialSubject.get("type"));
+        assertEquals(Constants.REVOCATION, credentialSubject.get("statusPurpose"));
+        assertNotNull(credentialSubject.get("encodedList"));
+
+        verify(storage).saveCredentials(
+            eq(issuerId + "#" + vcId),
+            any(CustomCredential.class),
+            eq(holderBpn),
+            eq(Constants.STATUS_LIST_2021_CREDENTIAL)
+        );
+    }
+
+    @Test
+    void issueStatusListCredential_throwsInternalErrorException() {
+        // Given
+        String holderBpn = "BPNL000000000001";
+        String vcId = "test-vc-id";
+        String baseWalletBpn = "BPNL000000000000";
+
+        // Mock to throw InternalErrorException directly
+        when(walletStubSettings.baseWalletBPN()).thenReturn(baseWalletBpn);
+        when(didDocumentService.getDidDocument(baseWalletBpn))
+            .thenThrow(new InternalErrorException("Test error"));
+
+        // When/Then
+        InternalErrorException exception = assertThrows(
+            InternalErrorException.class,
+            () -> credentialService.issueStatusListCredential(holderBpn, vcId)
+        );
+        assertEquals("Test error", exception.getMessage());
+    }
+
+    @Test
+    void issueStatusListCredential_throwsWrappedInternalErrorException() {
+        // Given
+        String holderBpn = "BPNL000000000001";
+        String vcId = "test-vc-id";
+        String baseWalletBpn = "BPNL000000000000";
+
+        // Mock to throw a general exception that will be wrapped
+        when(walletStubSettings.baseWalletBPN()).thenReturn(baseWalletBpn);
+        when(didDocumentService.getDidDocument(baseWalletBpn))
+            .thenThrow(new RuntimeException("Unexpected error"));
+
+        // When/Then
+        InternalErrorException exception = assertThrows(
+            InternalErrorException.class,
+            () -> credentialService.issueStatusListCredential(holderBpn, vcId)
+        );
+        assertEquals("Internal Error: Unexpected error", exception.getMessage());
     }
 }
