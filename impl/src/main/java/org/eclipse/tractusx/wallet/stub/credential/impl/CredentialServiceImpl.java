@@ -214,6 +214,8 @@ public class CredentialServiceImpl implements CredentialService {
 
             storage.saveCredentials(vcId, credentialWithoutProof, holderBpn, Constants.DATA_EXCHANGE_CREDENTIAL);
             return credentialWithoutProof;
+        } catch (IllegalArgumentException | InternalErrorException e) {
+            throw e;
         } catch (Exception e) {
             throw new InternalErrorException("Internal Error: " + e.getMessage());
         }

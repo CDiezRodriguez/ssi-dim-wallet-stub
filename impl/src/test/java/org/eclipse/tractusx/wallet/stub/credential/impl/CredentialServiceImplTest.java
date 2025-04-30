@@ -236,6 +236,52 @@ public class CredentialServiceImplTest {
     }
 
     /**
+     * Tests that InternalErrorException is propagated correctly.
+     * This test verifies that when an InternalErrorException occurs,
+     * it is passed through without modification.
+     */
+    @Test
+    void getVerifiableCredentialByHolderBpnAndTypeAsJwt_propagatesInternalErrorException() {
+        // Given
+        String holderBpn = "BPNL000000000001";
+        String type = Constants.MEMBERSHIP_CREDENTIAL;
+
+        // Mock Storage to throw InternalErrorException directly
+        when(storage.getCredentialsAsJwtByHolderBpnAndType(holderBpn, type))
+            .thenThrow(new InternalErrorException("Direct internal error"));
+
+        // When/Then
+        InternalErrorException exception = assertThrows(
+            InternalErrorException.class,
+            () -> credentialService.getVerifiableCredentialByHolderBpnAndTypeAsJwt(holderBpn, type)
+        );
+        assertEquals("Direct internal error", exception.getMessage());
+    }
+
+    /**
+     * Tests that other exceptions are wrapped in InternalErrorException.
+     * This test verifies that when an unexpected exception occurs,
+     * it is wrapped in an InternalErrorException with an appropriate message.
+     */
+    @Test
+    void getVerifiableCredentialByHolderBpnAndTypeAsJwt_wrapsUnexpectedException() {
+        // Given
+        String holderBpn = "BPNL000000000001";
+        String type = Constants.MEMBERSHIP_CREDENTIAL;
+
+        // Mock Storage to throw RuntimeException
+        when(storage.getCredentialsAsJwtByHolderBpnAndType(holderBpn, type))
+            .thenThrow(new RuntimeException("Unexpected runtime error"));
+
+        // When/Then
+        InternalErrorException exception = assertThrows(
+            InternalErrorException.class,
+            () -> credentialService.getVerifiableCredentialByHolderBpnAndTypeAsJwt(holderBpn, type)
+        );
+        assertEquals("Internal Error: Unexpected runtime error", exception.getMessage());
+    }
+
+    /**
      * Tests the creation of a BPN credential.
      * This test verifies that:
      * 1. A new BPN credential is created with correct issuer information
@@ -449,5 +495,59 @@ public class CredentialServiceImplTest {
             () -> credentialService.issueStatusListCredential(holderBpn, vcId)
         );
         assertEquals("Internal Error: Unexpected error", exception.getMessage());
+    }
+
+    /**
+     * Tests that InternalErrorException is propagated correctly in issueDataExchangeGovernanceCredential.
+     */
+    @Test
+    void issueDataExchangeGovernanceCredential_propagatesInternalErrorException() {
+        // Given
+        String holderBpn = "BPNL000000000001";
+        String vcId = "test-vc-id";
+        String baseWalletBpn = "BPNL000000000000";
+
+        // Mock base setup
+        when(walletStubSettings.baseWalletBPN()).thenReturn(baseWalletBpn);
+        when(storage.getCredentialsByHolderBpnAndType(holderBpn, Constants.DATA_EXCHANGE_CREDENTIAL))
+                .thenReturn(Optional.empty());
+
+        // Mock DidDocumentService to throw InternalErrorException
+        when(didDocumentService.getDidDocument(baseWalletBpn))
+            .thenThrow(new InternalErrorException("Direct internal error"));
+
+        // When/Then
+        InternalErrorException exception = assertThrows(
+            InternalErrorException.class,
+            () -> credentialService.getVerifiableCredentialByHolderBpnAndType(holderBpn, Constants.DATA_EXCHANGE_CREDENTIAL)
+        );
+        assertEquals("Direct internal error", exception.getMessage());
+    }
+
+    /**
+     * Tests that other exceptions are wrapped in InternalErrorException in issueDataExchangeGovernanceCredential.
+     */
+    @Test
+    void issueDataExchangeGovernanceCredential_wrapsUnexpectedException() {
+        // Given
+        String holderBpn = "BPNL000000000001";
+        String vcId = "test-vc-id";
+        String baseWalletBpn = "BPNL000000000000";
+
+        // Mock base setup
+        when(walletStubSettings.baseWalletBPN()).thenReturn(baseWalletBpn);
+        when(storage.getCredentialsByHolderBpnAndType(holderBpn, Constants.DATA_EXCHANGE_CREDENTIAL))
+                .thenReturn(Optional.empty());
+
+        // Mock DidDocumentService to throw RuntimeException
+        when(didDocumentService.getDidDocument(baseWalletBpn))
+            .thenThrow(new RuntimeException("Unexpected runtime error"));
+
+        // When/Then
+        InternalErrorException exception = assertThrows(
+            InternalErrorException.class,
+            () -> credentialService.getVerifiableCredentialByHolderBpnAndType(holderBpn, Constants.DATA_EXCHANGE_CREDENTIAL)
+        );
+        assertEquals("Internal Error: Unexpected runtime error", exception.getMessage());
     }
 }
