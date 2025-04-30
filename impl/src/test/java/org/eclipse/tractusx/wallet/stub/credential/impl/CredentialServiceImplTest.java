@@ -1,3 +1,24 @@
+/*
+ * *******************************************************************************
+ *  Copyright (c) 2025 LKS Next
+ *  Copyright (c) 2025 Contributors to the Eclipse Foundation
+ *
+ *  See the NOTICE file(s) distributed with this work for additional
+ *  information regarding copyright ownership.
+ *
+ *  This program and the accompanying materials are made available under the
+ *  terms of the Apache License, Version 2.0 which is available at
+ *  https://www.apache.org/licenses/LICENSE-2.0.
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  License for the specific language governing permissions and limitations
+ *  under the License.
+ *
+ *  SPDX-License-Identifier: Apache-2.0
+ * ******************************************************************************
+ */
 package org.eclipse.tractusx.wallet.stub.credential.impl;
 
 import com.nimbusds.jose.crypto.ECDSAVerifier;
@@ -110,6 +131,11 @@ public class CredentialServiceImplTest {
         when(didDocumentService.getDidDocument(holderBpn)).thenReturn(holderDidDoc);
     }
 
+    /**
+     * Tests retrieving an existing JWT credential.
+     * This test verifies that when a JWT credential already exists in storage,
+     * it is correctly retrieved and returned without creating a new one.
+     */
     @Test
     void getVerifiableCredentialByHolderBpnAndTypeAsJwt_returnsExistingJwt() {
         // Given
@@ -127,6 +153,14 @@ public class CredentialServiceImplTest {
         assertEquals(expectedJwt, actualJwt);
     }
 
+    /**
+     * Tests the creation of a new JWT credential when none exists.
+     * This test verifies that:
+     * 1. A new JWT is created with the correct structure
+     * 2. The JWT contains all required claims (issuer, subject, BPN, audience)
+     * 3. The JWT is properly signed with the correct key
+     * 4. The signature can be verified
+     */
     @Test
     void getVerifiableCredentialByHolderBpnAndTypeAsJwt_createsNewJwt() throws Exception {
         // Given
@@ -201,6 +235,14 @@ public class CredentialServiceImplTest {
         assertTrue(parsedJwt.verify(verifier), "JWT signature verification failed");
     }
 
+    /**
+     * Tests the creation of a BPN credential.
+     * This test verifies that:
+     * 1. A new BPN credential is created with correct issuer information
+     * 2. The credential subject contains all required BPN-specific fields
+     * 3. The credential is properly saved in storage
+     * 4. The credential follows the expected structure for BPN credentials
+     */
     @Test
     void getVerifiableCredentialByHolderBpnAndType_createsBpnCredential() throws Exception {
         // Given
@@ -227,6 +269,14 @@ public class CredentialServiceImplTest {
         verify(storage).saveCredentials(anyString(), any(CustomCredential.class), eq(holderBpn), eq(type));
     }
 
+    /**
+     * Tests the creation of a Data Exchange credential.
+     * This test verifies that:
+     * 1. A new Data Exchange credential is created with correct issuer information
+     * 2. The credential subject contains all required fields for data exchange
+     * 3. The correct group, use case, contract template and version are set
+     * 4. The credential is properly saved in storage
+     */
     @Test
     void getVerifiableCredentialByHolderBpnAndType_createsDataExchangeCredential() throws Exception {
         // Given
@@ -256,6 +306,11 @@ public class CredentialServiceImplTest {
         verify(storage).saveCredentials(anyString(), any(CustomCredential.class), eq(holderBpn), eq(type));
     }
 
+    /**
+     * Tests the error handling for unsupported credential types.
+     * This test verifies that when requesting a credential with an unsupported type,
+     * the service throws an IllegalArgumentException with an appropriate error message.
+     */
     @Test
     void getVerifiableCredentialByHolderBpnAndType_throwsExceptionForUnsupportedType() {
         // Given
@@ -276,6 +331,13 @@ public class CredentialServiceImplTest {
         assertEquals("vc type -> " + type + " is not supported", exception.getMessage());
     }
 
+    /**
+     * Tests retrieving an existing credential.
+     * This test verifies that:
+     * 1. When a credential already exists in storage, it is returned as-is
+     * 2. No new credential is created
+     * 3. No interactions with key service or DID document service occur
+     */
     @Test
     void getVerifiableCredentialByHolderBpnAndType_returnsExistingCredential() {
         // Given
@@ -299,6 +361,14 @@ public class CredentialServiceImplTest {
         verifyNoMoreInteractions(keyService, didDocumentService);
     }
 
+    /**
+     * Tests the successful creation of a Status List Credential.
+     * This test verifies that:
+     * 1. The credential is created with correct issuer information
+     * 2. The credential subject contains the required type and purpose
+     * 3. The encoded list is present in the credential
+     * 4. The credential is properly saved in storage
+     */
     @Test
     void issueStatusListCredential_successful() {
         // Given
@@ -331,6 +401,11 @@ public class CredentialServiceImplTest {
         );
     }
 
+    /**
+     * Tests the scenario where an InternalErrorException is thrown directly.
+     * This test verifies that when the DID document service throws an InternalErrorException,
+     * the same exception is propagated up through the service layer without modification.
+     */
     @Test
     void issueStatusListCredential_throwsInternalErrorException() {
         // Given
@@ -351,6 +426,11 @@ public class CredentialServiceImplTest {
         assertEquals("Test error", exception.getMessage());
     }
 
+    /**
+     * Tests the scenario where a runtime exception is wrapped into an InternalErrorException.
+     * This test verifies that when an unexpected RuntimeException occurs,
+     * it is properly caught and wrapped into an InternalErrorException with an appropriate error message.
+     */
     @Test
     void issueStatusListCredential_throwsWrappedInternalErrorException() {
         // Given
